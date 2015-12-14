@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class LoginActivity extends AppCompatActivity  {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     TextView tvTitle;
     Typeface titleFont;
@@ -34,6 +34,15 @@ public class LoginActivity extends AppCompatActivity  {
         etPassword = (EditText) findViewById(R.id.etPassword);
         bConnect = (Button) findViewById(R.id.bConnect);
 
+        bConnect.setOnClickListener(this);
     }
 
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.bConnect) {
+//            LoginTask task = new LoginTask();
+//            task.execute();
+
+        }
+    }
 }
