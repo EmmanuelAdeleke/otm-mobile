@@ -40,9 +40,36 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.bConnect) {
-//            LoginTask task = new LoginTask();
-//            task.execute();
+            LoginTask task = new LoginTask();
+            task.execute();
 
+        }
+    }
+
+    private class LoginTask extends AsyncTask<String, Void, Void> {
+
+        ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            dialog.setMessage("Authenticating user...");
+            dialog.show();
+            boolean result = false;
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            try {
+                Thread.sleep(9000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            dialog.dismiss();
         }
     }
 }
