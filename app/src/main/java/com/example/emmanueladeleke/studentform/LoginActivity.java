@@ -1,9 +1,13 @@
 package com.example.emmanueladeleke.studentform;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.StrictMode;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -57,9 +62,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.bConnect) {
-            LoginTask task = new LoginTask();
-            task.execute(etUsername.getText().toString(), etPassword.getText().toString());
-            task.on
+
+            if (etUsername.getText().toString().equals("".trim()) || etPassword.getText().toString().equals("".trim())) {
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle("Do not leave fields empty.")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                            }
+                        })
+                        .show();
+            }
+            else {
+
+                LoginTask task = new LoginTask();
+                task.execute(etUsername.getText().toString(), etPassword.getText().toString());
+            }
 
         }
     }
@@ -68,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
         boolean result = false;
+        String strJson;
         @Override
         protected void onPreExecute() {
             dialog.setMessage("Authenticating user...");
@@ -85,7 +104,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d("Username", username);
             Log.d("Password", password);
 
-            String strJson;
+            strJson = null;
             URL url = null;
             BufferedReader in = null;
             try {
@@ -102,6 +121,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 while ((inputLine = in.readLine()) != null)
                     builder.append(inputLine);
             } catch (IOException e) {
+                Log.d("IOException", "ioexception");
+                e.printStackTrace();
+            }
+            catch (NullPointerException e) {
+                Log.d("NullPointer", "Here is a nullpointer exception");
                 e.printStackTrace();
             }
             try {
@@ -115,13 +139,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             System.out.println();
 
             if (strJson.equals("[]")) {
-                Log.d("hey", strJson);
+                Log.d("AuthFail", strJson);
             }
             else {
                 //createFile(strJson);
-                Log.d("hey", strJson);
+                Log.d("AuthSuccess", strJson);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             //AuthUser authUser = new AuthUser(username, password);
            // authUser.authenticate();
             //Log.d("test!", authUser.authenticate() + "");
@@ -130,8 +161,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(String str) {
             dialog.dismiss();
+
+            if (strJson.equals("[]")) {
+                new AlertDialog.Builder(LoginActivity.this)
+                        .setTitle("Authentication Failed!")
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // continue with delete
+                            }
+                        })
+                        .show();
+            }
+            else {
+                finish();
+            }
         }
     }
 }
