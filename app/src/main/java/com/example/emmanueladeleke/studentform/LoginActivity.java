@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -57,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         setStatusBarColor(this);
 
-   // Window.setStatusBarColor(R.color.login_grey);
+        // Window.setStatusBarColor(R.color.login_grey);
         bConnect.setOnClickListener(this);
     }
 
@@ -85,8 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             }
                         })
                         .show();
-            }
-            else {
+            } else {
 
                 LoginTask task = new LoginTask();
                 task.execute(etUsername.getText().toString(), etPassword.getText().toString());
@@ -100,6 +101,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
         boolean result = false;
         String strJson;
+
         @Override
         protected void onPreExecute() {
             dialog.setMessage("Authenticating user...");
@@ -123,8 +125,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             try {
                 url = new URL("http://emmanueladeleke.ddns.net:3000/otm/lecturer?query={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
                 in = new BufferedReader(new InputStreamReader(url.openStream()));
-            }
-            catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -136,8 +137,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } catch (IOException e) {
                 Log.d("IOException", "ioexception");
                 e.printStackTrace();
-            }
-            catch (NullPointerException e) {
+            } catch (NullPointerException e) {
                 Log.d("NullPointer", "Here is a nullpointer exception");
                 e.printStackTrace();
             }
@@ -148,13 +148,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
 
-            strJson = builder.toString().replaceAll("\\s+","");
+            strJson = builder.toString().replaceAll("\\s+", "");
             System.out.println();
 
             if (strJson.equals("[]")) {
                 Log.d("AuthFail", strJson);
-            }
-            else {
+            } else {
                 //createFile(strJson);
                 Log.d("AuthSuccess", strJson);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -167,10 +166,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 e.printStackTrace();
             }
             //AuthUser authUser = new AuthUser(username, password);
-           // authUser.authenticate();
+            // authUser.authenticate();
             //Log.d("test!", authUser.authenticate() + "");
             //Log.d("username", username);
-        return strJson;
+            return strJson;
         }
 
         @Override
@@ -179,10 +178,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             if (strJson.equals("[]")) {
                 UserDialog.showMessageToUser(LoginActivity.this, "Wrong login details. Try again");
+            } else {
+                try {
+                    // Does not run on Marshmallow
+                    FileWriter file = new FileWriter(Environment.getExternalStorageDirectory() + "/user.json", true);
+                    file.write(strJson);
+                    Log.d("success", "success");
+                    file.close();
+                } catch (IOException e) {
+                    System.out.println("Cannot create file");
+                    Log.d("fail", "fail");
+                    Log.d("FilePath?", getFilesDir().toString());
+                    e.printStackTrace();
+                }
             }
-            else {
-                finish();
-            }
+            finish();
+
         }
     }
 }
