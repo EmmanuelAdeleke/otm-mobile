@@ -1,11 +1,14 @@
 package com.example.emmanueladeleke.studentform;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -41,9 +45,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
 
         tvTitle = (TextView) findViewById(R.id.tvTitle);
 
@@ -54,16 +55,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         etPassword = (EditText) findViewById(R.id.etPassword);
         bConnect = (Button) findViewById(R.id.bConnect);
 
+        setStatusBarColor(this);
 
-
+   // Window.setStatusBarColor(R.color.login_grey);
         bConnect.setOnClickListener(this);
+    }
+
+    public static void setStatusBarColor(Activity activity) {
+        Window window = activity.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Color.parseColor("#616161"));
+        }
     }
 
     @Override
     public void onClick(View v) {
+
+        String username = etUsername.getText().toString();
+        String password = etPassword.getText().toString();
+
         if (v.getId() == R.id.bConnect) {
 
-            if (etUsername.getText().toString().equals("".trim()) || etPassword.getText().toString().equals("".trim())) {
+            if (username.equals("".trim()) || password.toString().equals("".trim())) {
                 new AlertDialog.Builder(LoginActivity.this)
                         .setTitle("Do not leave fields empty.")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
@@ -165,14 +178,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             dialog.dismiss();
 
             if (strJson.equals("[]")) {
-                new AlertDialog.Builder(LoginActivity.this)
-                        .setTitle("Authentication Failed!")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // continue with delete
-                            }
-                        })
-                        .show();
+                UserDialog.showMessageToUser(LoginActivity.this, "Wrong login details. Try again");
             }
             else {
                 finish();
