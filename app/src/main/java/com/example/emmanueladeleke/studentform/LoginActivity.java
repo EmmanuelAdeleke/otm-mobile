@@ -24,8 +24,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.commons.io.FileUtils;
+import org.w3c.dom.Text;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +43,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     TextView tvTitle;
     Typeface titleFont;
-
     EditText etUsername, etPassword;
     Button bConnect;
 
@@ -48,19 +51,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        tvTitle = (TextView) findViewById(R.id.tvTitle);
+//        FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"));
 
+        // Custom font
+        tvTitle = (TextView) findViewById(R.id.tvTitle);
         titleFont = Typeface.createFromAsset(getAssets(), "fonts/titleFont.ttf");
         tvTitle.setTypeface(titleFont);
 
+        // Bind views
         etUsername = (EditText) findViewById(R.id.etUsername);
         etPassword = (EditText) findViewById(R.id.etPassword);
         bConnect = (Button) findViewById(R.id.bConnect);
 
-        setStatusBarColor(this);
-
-        // Window.setStatusBarColor(R.color.login_grey);
+        // OnClick listener for login button
         bConnect.setOnClickListener(this);
+
+        // Change status bar
+        setStatusBarColor(this);
     }
 
     public static void setStatusBarColor(Activity activity) {
@@ -73,46 +80,43 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
 
+        // Convert TextView to String
         String username = etUsername.getText().toString();
         String password = etPassword.getText().toString();
 
+        // If button is clicked
         if (v.getId() == R.id.bConnect) {
-
             if (username.equals("".trim()) || password.toString().equals("".trim())) {
-                new AlertDialog.Builder(LoginActivity.this)
-                        .setTitle("Do not leave fields empty.")
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                // continue with delete
-                            }
-                        })
-                        .show();
+                UserDialog.showMessageToUser(LoginActivity.this, "Do not leave fields empty");
             } else {
-
+                // Execute task
                 LoginTask task = new LoginTask();
                 task.execute(etUsername.getText().toString(), etPassword.getText().toString());
             }
-
         }
     }
 
+    // Background task
     private class LoginTask extends AsyncTask<String, String, String> {
 
-        ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
-        boolean result = false;
-        String strJson;
+        private ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
+        private String strJson;
 
         @Override
         protected void onPreExecute() {
+            Log.d("First", "First");
+            // Show message of dialog
             dialog.setMessage("Authenticating user...");
             dialog.show();
-
-            boolean result = false;
         }
 
         @Override
         protected String doInBackground(String... params) {
 
+            Log.d("Second", "Second");
+//            FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"));
+
+            // Get the username and password from params
             String username = params[0];
             String password = params[1];
 
@@ -123,8 +127,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             URL url = null;
             BufferedReader in = null;
             try {
+                // Get query (username & password)
                 url = new URL("http://emmanueladeleke.ddns.net:3000/otm/lecturer?query={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
                 in = new BufferedReader(new InputStreamReader(url.openStream()));
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -154,26 +160,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (strJson.equals("[]")) {
                 Log.d("AuthFail", strJson);
             } else {
-                //createFile(strJson);
+
                 Log.d("AuthSuccess", strJson);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
                 startActivity(intent);
             }
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            //AuthUser authUser = new AuthUser(username, password);
-            // authUser.authenticate();
-            //Log.d("test!", authUser.authenticate() + "");
-            //Log.d("username", username);
             return strJson;
         }
 
         @Override
         protected void onPostExecute(String str) {
+            Log.d("Third", "Third");
             dialog.dismiss();
 
             if (strJson.equals("[]")) {
@@ -181,19 +184,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else {
                 try {
                     // Does not run on Marshmallow
-                    FileWriter file = new FileWriter(Environment.getExternalStorageDirectory() + "/user.json", true);
-                    file.write(strJson);
+                    FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"));
+                    FileUtils.writeStringToFile(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"), strJson, false);
+
                     Log.d("success", "success");
-                    file.close();
+                   // file.close();
                 } catch (IOException e) {
                     System.out.println("Cannot create file");
                     Log.d("fail", "fail");
-                    Log.d("FilePath?", getFilesDir().toString());
+                    Log.d("FilePath?", Environment.getExternalStorageDirectory().toString());
                     e.printStackTrace();
                 }
+                finish();
             }
-            finish();
-
         }
     }
 }
