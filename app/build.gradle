@@ -24,5 +24,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.android.support:design:23.0.0'
     compile files('libs/commons-io-2.4.jar')
-
+    compile files('libs/gson-2.3.1.jar')
+    compile files('libs/gson-2.3.1-javadoc.jar')
+    compile files('libs/gson-2.3.1-sources.jar')
 }

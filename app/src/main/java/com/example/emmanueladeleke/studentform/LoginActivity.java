@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             BufferedReader in = null;
             try {
                 // Get query (username & password)
-                url = new URL("http://emmanueladeleke.ddns.net:3000/otm/lecturer?query={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
+                url = new URL("http://emmanueladeleke.ddns.net:3000/otm/student?query={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
                 in = new BufferedReader(new InputStreamReader(url.openStream()));
 
             } catch (Exception e) {
