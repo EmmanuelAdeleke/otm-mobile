@@ -1,5 +1,7 @@
 package com.example.emmanueladeleke.studentform;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +12,6 @@ import android.view.MenuInflater;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
@@ -19,12 +20,9 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -37,29 +35,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
+        QuestionTask questionTask = new QuestionTask();
+        questionTask.execute();
+
+        // Call init user method
         initUser();
 
+        // Bind toolbar and set as ActionBar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Bind the textViews and set to user name and email
         tvName = (TextView) findViewById(R.id.tvFullName);
         tvEmail = (TextView) findViewById(R.id.tvEmail);
-
         tvName.setText(user.getFirstName() + " " + user.getLastName());
         tvEmail.setText(user.getEmailAddress());
-
-        JSONArray jsonArray = null;
-
-
-
-
-
-
-
-        //tvText.setText(strJson);
 
     }
 
@@ -85,12 +77,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d("jsonObject", jsonObject.toString());
 
-//        GsonBuilder builder = new GsonBuilder();
-//        Gson gson = builder.create();
-
         Gson gson = new Gson();
-
-        user = gson.fromJson(jsonObject.toString(), User.class);
 
         user = gson.fromJson(jsonObject.toString(), User.class);
 
@@ -100,11 +87,67 @@ public class MainActivity extends AppCompatActivity {
         Log.d("user", user.toString());
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    private class QuestionTask extends AsyncTask<Void, Void, Void> {
+
+        ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            dialog = new ProgressDialog(MainActivity.this);
+            dialog.setMessage("Loading questions");
+            dialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            URL url;
+            BufferedReader in = null;
+            try {
+                // Get query (username & password)
+                url = new URL("http://emmanueladeleke.ddns.net:3000/otm/lecturer");
+                in = new BufferedReader(new InputStreamReader(url.openStream()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            //
+            String inputLine;
+            StringBuilder builder = new StringBuilder();
+            try {
+                while ((inputLine = in.readLine()) != null)
+                    builder.append(inputLine);
+            } catch (IOException e) {
+                Log.d("IOException", "ioexception");
+                e.printStackTrace();
+            } catch (NullPointerException e) {
+                Log.d("NullPointer", "Here is a nullpointer exception");
+
+            }
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            dialog.dismiss();
+        }
     }
 }

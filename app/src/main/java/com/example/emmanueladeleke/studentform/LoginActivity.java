@@ -2,42 +2,27 @@ package com.example.emmanueladeleke.studentform;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
-import android.os.StrictMode;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Text;
-
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -101,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         private ProgressDialog dialog = new ProgressDialog(LoginActivity.this);
         private String strJson;
+        private int x = 0;
 
         @Override
         protected void onPreExecute() {
@@ -123,18 +109,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d("Username", username);
             Log.d("Password", password);
 
+            // Assign strJson to null
             strJson = null;
-            URL url = null;
+
+            // Assign url and in
+            URL url;
             BufferedReader in = null;
             try {
                 // Get query (username & password)
                 url = new URL("http://emmanueladeleke.ddns.net:3000/otm/student?query={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
                 in = new BufferedReader(new InputStreamReader(url.openStream()));
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
+            // Get input from in and store in builder
             String inputLine;
             StringBuilder builder = new StringBuilder();
             try {
@@ -144,32 +133,35 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 Log.d("IOException", "ioexception");
                 e.printStackTrace();
             } catch (NullPointerException e) {
+                x = 1;
                 Log.d("NullPointer", "Here is a nullpointer exception");
-                e.printStackTrace();
+
             }
             try {
-                in.close();
+                if (in != null) {
+                    in.close();
+                }
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
 
+            // Remove all white spaces in strJson
             strJson = builder.toString().replaceAll("\\s+", "");
-            System.out.println();
 
+            // Check if JSON file is empty
             if (strJson.equals("[]")) {
                 Log.d("AuthFail", strJson);
-            } else {
-
+            }
+            else {
                 Log.d("AuthSuccess", strJson);
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                // Delayed timer for user login
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
-                startActivity(intent);
+
             }
             return strJson;
         }
@@ -179,16 +171,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d("Third", "Third");
             dialog.dismiss();
 
+            // If JSON file is empty, user login is false
             if (strJson.equals("[]")) {
                 UserDialog.showMessageToUser(LoginActivity.this, "Wrong login details. Try again");
-            } else {
+            }
+            // If x == 1 (NullPointer / ConnectionRefused exception)
+            else if (x == 1){
+                UserDialog.showMessageToUser(LoginActivity.this, "Error connecting to database");
+            }
+            else{
                 try {
                     // Does not run on Marshmallow
                     FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"));
                     FileUtils.writeStringToFile(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"), strJson, false);
-
                     Log.d("success", "success");
-                   // file.close();
+
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    // file.close();
                 } catch (IOException e) {
                     System.out.println("Cannot create file");
                     Log.d("fail", "fail");
