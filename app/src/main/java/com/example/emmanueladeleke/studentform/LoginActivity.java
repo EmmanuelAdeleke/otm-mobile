@@ -155,11 +155,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             else {
                 Log.d("AuthSuccess", strJson);
                 // Delayed timer for user login
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
 
 
             }

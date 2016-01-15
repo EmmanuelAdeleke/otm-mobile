@@ -55,6 +55,10 @@ public class MainActivity extends AppCompatActivity {
         tvName.setText(user.getFirstName() + " " + user.getLastName());
         tvEmail.setText(user.getEmailAddress());
 
+        jsonToObject();
+        // TODO - Display in RecyclerView
+
+        // TODO - Add touch listener to RecyclerView
     }
 
     public void initUser() {
@@ -82,11 +86,45 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
 
         user = gson.fromJson(jsonObject.toString(), User.class);
-
-        //user = new gson.fromJson(jsonObject.toString(), User.class);
-
-
         Log.d("user", user.toString());
+    }
+
+    public void jsonToObject() {
+        String strJson = "";
+        File file = new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json");
+        try {
+            strJson = FileUtils.readFileToString(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        JSONObject jsonObject = null;
+        JSONArray jsonArray = null;
+
+        try {
+            jsonArray = new JSONArray(strJson);
+            jsonObject = new JSONObject(jsonArray.get(0).toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("jsonObject2", jsonObject.toString());
+        Log.d("strJsonFile", strJson);
+
+        Gson gson = new Gson();
+
+        Lecturer[] lecturer = gson.fromJson(strJson, Lecturer[].class);
+
+        for (int i = 0; i < lecturer.length; i++) {
+
+            Log.d("LECTURER" ,lecturer[i] + "");
+        }
+
+
+
+
+
+
     }
 
     @Override
@@ -143,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             // Remove all white spaces in strJson
-            strJson = builder.toString().replaceAll("\\s+", "");
+            strJson = builder.toString().replaceAll("\\s+", " ");
 
             // Check if JSON file is empty
             if (strJson.equals("[]")) {
