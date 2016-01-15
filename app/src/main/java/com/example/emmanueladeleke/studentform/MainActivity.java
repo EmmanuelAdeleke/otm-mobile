@@ -1,9 +1,11 @@
 package com.example.emmanueladeleke.studentform;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -107,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
+            // Assign url and in
+            String strJson;
             URL url;
             BufferedReader in = null;
             try {
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            //
+            // Get input from in and store in builder
             String inputLine;
             StringBuilder builder = new StringBuilder();
             try {
@@ -137,17 +141,42 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            // Remove all white spaces in strJson
+            strJson = builder.toString().replaceAll("\\s+", "");
+
+            // Check if JSON file is empty
+            if (strJson.equals("[]")) {
+                Log.d("AuthFail", strJson);
+            } else {
+                Log.d("AuthSuccess", strJson);
+            }
+
+            try {
+                // Does not run on Marshmallow
+                FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json"));
+                FileUtils.writeStringToFile(new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json"), strJson, false);
+                Log.d("success", strJson + "right here");
+
+                // file.close();
+            } catch (IOException e) {
+                System.out.println("Cannot create file");
+                Log.d("fail", "fail");
+                Log.d("FilePath?", Environment.getExternalStorageDirectory().toString());
+                e.printStackTrace();
+            }
             return null;
         }
 
+
         @Override
         protected void onPostExecute(Void aVoid) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            super.onPostExecute(aVoid);
             dialog.dismiss();
+//
+//            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//            startActivity(intent);
+//            finish();
         }
     }
 }
