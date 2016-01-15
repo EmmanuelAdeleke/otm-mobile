@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/blurbg2"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context="com.example.emmanueladeleke.studentform.SplashScreen">
+
+    <ImageView
+        android:src="@drawable/otmtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="60dp"
+        android:id="@+id/otmtitleimg" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="One to Many Communication"
+        android:layout_below="@+id/otmtitleimg"
+        android:textColor="#FFF"
+        android:layout_marginTop="1dp"
+        android:textSize="20sp"
+        android:id="@+id/otmtitle"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_below="@+id/otmtitle"
+        android:textColor="#FFF"
+        android:layout_marginTop="1dp"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_height="wrap_content"
+        android:text="The mighty Quiz tool for lecturers and their students"/>
+
+
+
+</LinearLayout>
