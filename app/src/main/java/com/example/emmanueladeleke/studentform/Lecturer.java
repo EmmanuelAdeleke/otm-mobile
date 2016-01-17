@@ -17,7 +17,7 @@ public class Lecturer {
     ArrayList<OpenQuestion> questions;
 
     public String toString() {
-        return "ID: " + _id + "firstName: " +  firstName + "lastName: " + lastName + "username: " + username + "password: " + password + "emailAddress: " + emailAddress + "\n" +
+        return "ID: " + _id + "\nfirstName: " +  firstName + "\nlastName: " + lastName + "\nusername: " + username + "\npassword: " + password + "\nemailAddress: " + emailAddress + "\n" +
                 "QuestionList " + questions;
     }
 }

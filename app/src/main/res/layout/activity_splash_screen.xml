@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/blurbg2"
+    android:background="@drawable/blurbgsplash"
+
     android:orientation="vertical"
     android:gravity="center"
     tools:context="com.example.emmanueladeleke.studentform.SplashScreen">

@@ -1,11 +1,15 @@
 package com.example.emmanueladeleke.studentform;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.Window;
 import android.widget.TextView;
 
 public class SplashScreen extends AppCompatActivity {
@@ -33,5 +37,13 @@ public class SplashScreen extends AppCompatActivity {
                 SplashScreen.this.finish();
             }
         }, SPLASH_DISPLAY_LENGTH);
+        setStatusBarColor(this);
+    }
+
+    public static void setStatusBarColor(Activity activity) {
+        Window window = activity.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Color.parseColor("#616161"));
+        }
     }
 }

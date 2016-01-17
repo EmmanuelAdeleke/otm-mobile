@@ -7,10 +7,16 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -25,6 +31,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvName;
     TextView tvEmail;
     User user;
+    RecyclerView rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +64,20 @@ public class MainActivity extends AppCompatActivity {
         tvName.setText(user.getFirstName() + " " + user.getLastName());
         tvEmail.setText(user.getEmailAddress());
 
-        jsonToObject();
+        jsonToObjectList();
         // TODO - Display in RecyclerView
+        rv = (RecyclerView) findViewById(R.id.rv);
+        rv.setHasFixedSize(true);
+
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        rv.setLayoutManager(linearLayoutManager);
+
+        QuestionViewAdapter adapter = new QuestionViewAdapter(jsonToObjectList());
+        rv.setAdapter(adapter);
+        rv.setItemAnimator(new DefaultItemAnimator());
+
+        Log.e("wada", jsonToObjectList().toString());
 
         // TODO - Add touch listener to RecyclerView
     }
@@ -89,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("user", user.toString());
     }
 
-    public void jsonToObject() {
+    public List<QuestionRefactor> jsonToObjectList() {
         String strJson = "";
         File file = new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json");
         try {
@@ -115,16 +136,18 @@ public class MainActivity extends AppCompatActivity {
 
         Lecturer[] lecturer = gson.fromJson(strJson, Lecturer[].class);
 
-        for (int i = 0; i < lecturer.length; i++) {
+        List<QuestionRefactor> questionList = new ArrayList<>();
 
-            Log.d("LECTURER" ,lecturer[i] + "");
+        for (int i = 0; i < lecturer.length; i++) {
+            for (int j = 0; j < lecturer[i].questions.size(); j++) {
+                questionList.add(new QuestionRefactor(lecturer[i]._id,
+                        lecturer[i].firstName, lecturer[i].lastName, lecturer[i].questions.get(j)._id,
+                        lecturer[i].questions.get(j).topic, lecturer[i].questions.get(j).question));
+            }
         }
 
-
-
-
-
-
+        Log.d("questionListCheck", questionList.toString() + "\n");
+        return questionList;
     }
 
     @Override
@@ -132,6 +155,15 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_settings) {
+            UserDialog.showMessageToUser(this, "asdasd");
+            Log.d("exxx", "news");
+        }
+        return false;
     }
 
     private class QuestionTask extends AsyncTask<Void, Void, Void> {
