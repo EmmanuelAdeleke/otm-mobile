@@ -80,6 +80,14 @@ public class MainActivity extends AppCompatActivity {
         Log.e("wada", jsonToObjectList().toString());
 
         // TODO - Add touch listener to RecyclerView
+        ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                // do it
+                Log.d("position_r", position+"");
+                Log.d("position_x", jsonToObjectList().get(position).toString());
+            }
+        });
     }
 
     public void initUser() {

@@ -2,6 +2,7 @@ package com.example.emmanueladeleke.studentform;
 
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,13 +43,14 @@ public class QuestionViewAdapter extends RecyclerView.Adapter<QuestionViewAdapte
         return questionViewHolder;
     }
 
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
     }
 
     @Override
-    public void onBindViewHolder(QuestionViewHolder holder, int position) {
+    public void onBindViewHolder(QuestionViewHolder holder, final int position) {
         holder.firstName.setText(questionList.get(position).firstName);
         holder.lastName.setText(questionList.get(position).lastName);
         holder.topic.setText(questionList.get(position).topic);
