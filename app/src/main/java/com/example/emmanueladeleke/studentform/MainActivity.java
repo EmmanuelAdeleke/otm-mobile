@@ -1,22 +1,24 @@
 package com.example.emmanueladeleke.studentform;
 
+import android.annotation.TargetApi;
+import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -41,8 +43,11 @@ public class MainActivity extends AppCompatActivity {
     TextView tvName;
     TextView tvEmail;
     User user;
-    RecyclerView rv;
+    //    RecyclerView rv;
+    public static int position;
+    PlaceholderFragment fragment;
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,28 +71,36 @@ public class MainActivity extends AppCompatActivity {
 
         jsonToObjectList();
         // TODO - Display in RecyclerView
-        rv = (RecyclerView) findViewById(R.id.rv);
-        rv.setHasFixedSize(true);
+//        rv = (RecyclerView) findViewById(R.id.rv);
+//        rv.setHasFixedSize(true);
+//
+//
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        rv.setLayoutManager(linearLayoutManager);
+//
+//        QuestionViewAdapter adapter = new QuestionViewAdapter(jsonToObjectList());
+//        rv.setAdapter(adapter);
+//        rv.setItemAnimator(new DefaultItemAnimator());
 
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        rv.setLayoutManager(linearLayoutManager);
-
-        QuestionViewAdapter adapter = new QuestionViewAdapter(jsonToObjectList());
-        rv.setAdapter(adapter);
-        rv.setItemAnimator(new DefaultItemAnimator());
+        fragment = new PlaceholderFragment();
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .add(R.id.container, fragment)
+                    .commit();
+        }
 
         Log.e("wada", jsonToObjectList().toString());
 
+
         // TODO - Add touch listener to RecyclerView
-        ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-            @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                // do it
-                Log.d("position_r", position+"");
-                Log.d("position_x", jsonToObjectList().get(position).toString());
-            }
-        });
+//        ItemClickSupport.addTo(fragment.rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+//            @Override
+//            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+//                // do it
+//                Log.d("position_r", position + "");
+//                Log.d("position_x", jsonToObjectList().get(position).toString());
+//            }
+//        });
     }
 
     public void initUser() {
@@ -118,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d("user", user.toString());
     }
 
-    public List<QuestionRefactor> jsonToObjectList() {
+    public static List<QuestionRefactor> jsonToObjectList() {
         String strJson = "";
         File file = new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json");
         try {
@@ -169,7 +182,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_settings) {
             UserDialog.showMessageToUser(this, "asdasd");
-            Log.d("exxx", "news");
         }
         return false;
     }
@@ -256,5 +268,71 @@ public class MainActivity extends AppCompatActivity {
 //            startActivity(intent);
 //            finish();
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static class PlaceholderFragment extends Fragment {
+
+        public RecyclerView rv;
+
+
+        public PlaceholderFragment() {
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.open_question_fragment, container, false);
+
+            rv = (RecyclerView) rootView.findViewById(R.id.feedRecyclerView);
+            rv.setHasFixedSize(true);
+
+
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            rv.setLayoutManager(linearLayoutManager);
+
+            QuestionViewAdapter adapter = new QuestionViewAdapter(jsonToObjectList());
+
+            ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                @Override
+                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                    OQuestion question = new OQuestion();
+                    Log.d("position_r", position + "");
+                    Log.d("position_x", jsonToObjectList().get(position).toString());
+                    replaceFragment();
+                    MainActivity.position = position;
+                }
+            });
+
+            rv.setAdapter(adapter);
+            rv.setItemAnimator(new DefaultItemAnimator());
+
+
+            return rootView;
+        }
+
+        public void replaceFragment() {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.container, new OQuestion())
+                    .commit();
+        }
+
+        public int getPosition() {
+            return position;
+        }
+
+
+//        public void recyclerPosition() {
+//            ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+//            @Override
+//            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+//                // do it
+//                Log.d("position_r", position + "");
+//                Log.d("position_x", jsonToObjectList().get(position).toString());
+//            }
+//        });
+//        }
+
+
     }
 }

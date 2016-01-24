@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public static void setStatusBarColor(Activity activity) {
         Window window = activity.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(Color.parseColor("#616161"));
+            window.setStatusBarColor(Color.parseColor("#041530"));
         }
     }
 

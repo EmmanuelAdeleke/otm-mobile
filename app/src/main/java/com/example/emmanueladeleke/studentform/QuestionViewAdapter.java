@@ -13,13 +13,16 @@ import java.util.List;
 public class QuestionViewAdapter extends RecyclerView.Adapter<QuestionViewAdapter.QuestionViewHolder> {
 
     List<QuestionRefactor> questionList;
+    private ClickListener clickListener;
 
     public QuestionViewAdapter(List<QuestionRefactor> questionList) {
         this.questionList = questionList;
     }
 
-    public static class QuestionViewHolder extends RecyclerView.ViewHolder {
 
+    public static class QuestionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        private ClickListener clickListener;
         CardView cv;
         TextView firstName;
         TextView lastName;
@@ -28,13 +31,23 @@ public class QuestionViewAdapter extends RecyclerView.Adapter<QuestionViewAdapte
 
         public QuestionViewHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             cv = (CardView) itemView.findViewById(R.id.cv);
             firstName = (TextView) itemView.findViewById(R.id.tvFirstName);
             lastName = (TextView) itemView.findViewById(R.id.tvLastName);
             topic = (TextView) itemView.findViewById(R.id.tvTopic);
             question = (TextView) itemView.findViewById(R.id.tvQuestion);
         }
+
+
+        @Override
+        public void onClick(View v) {
+            if (clickListener != null) {
+                clickListener.itemClicked(v, getPosition());
+            }
+        }
     }
+
 
     @Override
     public QuestionViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
@@ -57,8 +70,17 @@ public class QuestionViewAdapter extends RecyclerView.Adapter<QuestionViewAdapte
         holder.question.setText(questionList.get(position).question);
     }
 
+    public void setClickListener(ClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
+
     @Override
     public int getItemCount() {
         return questionList.size();
     }
+
+    public interface ClickListener {
+        public void itemClicked(View view, int position);
+    }
+
 }
