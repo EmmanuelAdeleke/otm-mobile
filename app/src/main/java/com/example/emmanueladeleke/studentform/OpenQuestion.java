@@ -4,9 +4,9 @@ package com.example.emmanueladeleke.studentform;
  * Created by EmmanuelAdeleke on 15/01/2016.
  */
 public class OpenQuestion {
-    String _id;
-    String topic;
-    String question;
+    public String _id;
+    public String topic;
+    public String question;
 
     @Override
     public String toString() {

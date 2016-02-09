@@ -1,26 +1,25 @@
 package com.example.emmanueladeleke.studentform;
 
-import android.annotation.TargetApi;
-import android.app.Fragment;
+
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.design.widget.TabLayout;
+
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.emmanueladeleke.studentform.tabs.MultipleFragment;
+import com.example.emmanueladeleke.studentform.tabs.OpenFragment;
 import com.google.gson.Gson;
 
 import org.apache.commons.io.FileUtils;
@@ -45,10 +44,9 @@ public class MainActivity extends AppCompatActivity {
     User user;
     //    RecyclerView rv;
     public static int position;
-    PlaceholderFragment fragment;
+    private TabLayout tabLayout;
+    private ViewPager viewPager;
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -69,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
         tvName.setText(user.getFirstName() + " " + user.getLastName());
         tvEmail.setText(user.getEmailAddress());
 
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+
         jsonToObjectList();
         // TODO - Display in RecyclerView
 //        rv = (RecyclerView) findViewById(R.id.rv);
@@ -82,12 +85,6 @@ public class MainActivity extends AppCompatActivity {
 //        rv.setAdapter(adapter);
 //        rv.setItemAnimator(new DefaultItemAnimator());
 
-        fragment = new PlaceholderFragment();
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, fragment)
-                    .commit();
-        }
 
         Log.e("wada", jsonToObjectList().toString());
 
@@ -101,6 +98,43 @@ public class MainActivity extends AppCompatActivity {
 //                Log.d("position_x", jsonToObjectList().get(position).toString());
 //            }
 //        });
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new MultipleFragment(), "Multiple Choice");
+        adapter.addFragment(new OpenFragment(), "Written Answer");
+        viewPager.setAdapter(adapter);
+    }
+
+    class ViewPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public ViewPagerAdapter(android.support.v4.app.FragmentManager fm) {
+            super(fm);
+        }
+
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 
     public void initUser() {
@@ -270,69 +304,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static class PlaceholderFragment extends Fragment {
-
-        public RecyclerView rv;
-
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.open_question_fragment, container, false);
-
-            rv = (RecyclerView) rootView.findViewById(R.id.feedRecyclerView);
-            rv.setHasFixedSize(true);
-
-
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-            rv.setLayoutManager(linearLayoutManager);
-
-            QuestionViewAdapter adapter = new QuestionViewAdapter(jsonToObjectList());
-
-            ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-                @Override
-                public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                    OQuestion question = new OQuestion();
-                    Log.d("position_r", position + "");
-                    Log.d("position_x", jsonToObjectList().get(position).toString());
-                    replaceFragment();
-                    MainActivity.position = position;
-                }
-            });
-
-            rv.setAdapter(adapter);
-            rv.setItemAnimator(new DefaultItemAnimator());
-
-
-            return rootView;
-        }
-
-        public void replaceFragment() {
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.container, new OQuestion())
-                    .commit();
-        }
-
-        public int getPosition() {
-            return position;
-        }
-
-
-//        public void recyclerPosition() {
-//            ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
-//            @Override
-//            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-//                // do it
-//                Log.d("position_r", position + "");
-//                Log.d("position_x", jsonToObjectList().get(position).toString());
-//            }
-//        });
-//        }
-
-
-    }
 }
+
+
