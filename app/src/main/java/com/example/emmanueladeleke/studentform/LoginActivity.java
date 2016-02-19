@@ -90,7 +90,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onPreExecute() {
-            Log.d("First", "First");
+
             // Show message of dialog
             dialog.setMessage("Authenticating user...");
             dialog.show();
@@ -99,15 +99,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected String doInBackground(String... params) {
 
-            Log.d("Second", "Second");
+
 //            FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"));
 
             // Get the username and password from params
             String username = params[0];
             String password = params[1];
 
-            Log.d("Username", username);
-            Log.d("Password", password);
 
             // Assign strJson to null
             strJson = null;
@@ -117,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             BufferedReader in = null;
             try {
                 // Get query (username & password)
-                url = new URL("http://emmanueladeleke.ddns.net:3000/otm/student?query={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
+                url = new URL("http://emmanueladeleke.ddns.net:3000/OtMC/student?query={\"username\":\"" + username + "\",\"password\":\"" + password + "\"}");
                 in = new BufferedReader(new InputStreamReader(url.openStream()));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -148,27 +146,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             // Remove all white spaces in strJson
             strJson = builder.toString().replaceAll("\\s+", "");
 
-            // Check if JSON file is empty
-            if (strJson.equals("[]")) {
-                Log.d("AuthFail", strJson);
-            }
-            else {
-                Log.d("AuthSuccess", strJson);
-                // Delayed timer for user login
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-
-
-            }
             return strJson;
         }
 
         @Override
         protected void onPostExecute(String str) {
-            Log.d("Third", "Third");
             dialog.dismiss();
 
             // If JSON file is empty, user login is false
@@ -184,15 +166,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // Does not run on Marshmallow
                     FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"));
                     FileUtils.writeStringToFile(new File(Environment.getExternalStorageDirectory().toString() + "/user.json"), strJson, false);
-                    Log.d("success", "success");
 
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     // file.close();
                 } catch (IOException e) {
                     System.out.println("Cannot create file");
-                    Log.d("fail", "fail");
-                    Log.d("FilePath?", Environment.getExternalStorageDirectory().toString());
+//                    Log.d("fail", "fail");
+//                    Log.d("FilePath?", Environment.getExternalStorageDirectory().toString());
                     e.printStackTrace();
                 }
                 finish();

@@ -5,12 +5,12 @@ package com.example.emmanueladeleke.studentform;
  */
 public class QuestionRefactor {
 
-    int lecturerId;
-    String firstName;
-    String lastName;
-    String questionId;
-    String topic;
-    String question;
+    public int lecturerId;
+    public String firstName;
+    public String lastName;
+    public String questionId;
+    public String topic;
+    public String question;
 
 
     public QuestionRefactor(int lecturerId, String firstName, String lastName,

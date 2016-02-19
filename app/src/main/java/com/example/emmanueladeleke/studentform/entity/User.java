@@ -1,23 +1,23 @@
-package com.example.emmanueladeleke.studentform;
+package com.example.emmanueladeleke.studentform.entity;
 
 /**
  * Created by EmmanuelAdeleke on 18/12/2015.
  */
 public class User {
 
-    private int id;
+    private String _id;
     private String firstName;
     private String lastName;
     private String username;
     private String emailAddress;
     private String password;
 
-    public int getId() {
-        return id;
+    public String getId() {
+        return _id;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId(String _id) {
+        this._id = _id;
     }
 
     public String getFirstName() {
@@ -62,7 +62,7 @@ public class User {
 
 
     public String toString() {
-        return "ID: " + id + "\n" +
+        return "ID: " + _id + "\n" +
                 "Name :" + firstName + " " + lastName + "\n" +
                 "Email: " + emailAddress + "\n";
     }

@@ -1,4 +1,6 @@
-package com.example.emmanueladeleke.studentform;
+package com.example.emmanueladeleke.studentform.entity;
+
+import com.example.emmanueladeleke.studentform.OpenQuestion;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,13 +9,12 @@ import java.util.List;
  * Created by EmmanuelAdeleke on 15/01/2016.
  */
 public class Lecturer {
-    int _id;
+    String _id;
     String firstName;
     String lastName;
     String username;
     String password;
     String emailAddress;
-
     ArrayList<OpenQuestion> questions;
 
     public String toString() {

@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.TabLayout;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,8 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import com.example.emmanueladeleke.studentform.entity.User;
 import com.example.emmanueladeleke.studentform.tabs.MultipleFragment;
 import com.example.emmanueladeleke.studentform.tabs.OpenFragment;
+import com.example.emmanueladeleke.studentform.tabs.ViewPagerAdapter;
 import com.google.gson.Gson;
 
 import org.apache.commons.io.FileUtils;
@@ -32,8 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -41,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView tvName;
     TextView tvEmail;
-    User user;
+    public static User user;
     //    RecyclerView rv;
     public static int position;
     private TabLayout tabLayout;
@@ -66,13 +64,14 @@ public class MainActivity extends AppCompatActivity {
         tvEmail = (TextView) findViewById(R.id.tvEmail);
         tvName.setText(user.getFirstName() + " " + user.getLastName());
         tvEmail.setText(user.getEmailAddress());
+        Log.e("donedone", user.getId());
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        jsonToObjectList();
+//        jsonToObjectList();
         // TODO - Display in RecyclerView
 //        rv = (RecyclerView) findViewById(R.id.rv);
 //        rv.setHasFixedSize(true);
@@ -86,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 //        rv.setItemAnimator(new DefaultItemAnimator());
 
 
-        Log.e("wada", jsonToObjectList().toString());
+//        Log.e("wada", jsonToObjectList().toString());
 
 
         // TODO - Add touch listener to RecyclerView
@@ -105,36 +104,6 @@ public class MainActivity extends AppCompatActivity {
         adapter.addFragment(new MultipleFragment(), "Multiple Choice");
         adapter.addFragment(new OpenFragment(), "Written Answer");
         viewPager.setAdapter(adapter);
-    }
-
-    class ViewPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public ViewPagerAdapter(android.support.v4.app.FragmentManager fm) {
-            super(fm);
-        }
-
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        public void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
     }
 
     public void initUser() {
@@ -165,45 +134,42 @@ public class MainActivity extends AppCompatActivity {
         Log.d("user", user.toString());
     }
 
-    public static List<QuestionRefactor> jsonToObjectList() {
-        String strJson = "";
-        File file = new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json");
-        try {
-            strJson = FileUtils.readFileToString(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        JSONObject jsonObject = null;
-        JSONArray jsonArray = null;
-
-        try {
-            jsonArray = new JSONArray(strJson);
-            jsonObject = new JSONObject(jsonArray.get(0).toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        Log.d("jsonObject2", jsonObject.toString());
-        Log.d("strJsonFile", strJson);
-
-        Gson gson = new Gson();
-
-        Lecturer[] lecturer = gson.fromJson(strJson, Lecturer[].class);
-
-        List<QuestionRefactor> questionList = new ArrayList<>();
-
-        for (int i = 0; i < lecturer.length; i++) {
-            for (int j = 0; j < lecturer[i].questions.size(); j++) {
-                questionList.add(new QuestionRefactor(lecturer[i]._id,
-                        lecturer[i].firstName, lecturer[i].lastName, lecturer[i].questions.get(j)._id,
-                        lecturer[i].questions.get(j).topic, lecturer[i].questions.get(j).question));
-            }
-        }
-
-        Log.d("questionListCheck", questionList.toString() + "\n");
-        return questionList;
-    }
+//    public static List<QuestionRefactor> jsonToObjectList() {
+//        String strJson = "";
+//        File file = new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json");
+//        try {
+//            strJson = FileUtils.readFileToString(file);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        JSONObject jsonObject = null;
+//        JSONArray jsonArray = null;
+//
+//        try {
+//            jsonArray = new JSONArray(strJson);
+//            jsonObject = new JSONObject(jsonArray.get(0).toString());
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//
+//        Gson gson = new Gson();
+//
+//        Lecturer[] lecturer = gson.fromJson(strJson, Lecturer[].class);
+//
+//        List<QuestionRefactor> questionList = new ArrayList<>();
+//
+////        for (int i = 0; i < lecturer.length; i++) {
+////            for (int j = 0; j < lecturer[i].questions.size(); j++) {
+////                questionList.add(new QuestionRefactor(lecturer[i].,
+////                        lecturer[i].firstName, lecturer[i].lastName, lecturer[i].questions.get(j)._id,
+////                        lecturer[i].questions.get(j).topic, lecturer[i].questions.get(j).question));
+////            }
+////        }
+//
+//        Log.d("questionListCheck", questionList.toString() + "\n");
+//        return questionList;
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -239,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             BufferedReader in = null;
             try {
                 // Get query (username & password)
-                url = new URL("http://emmanueladeleke.ddns.net:3000/otm/lecturer");
+                url = new URL("http://emmanueladeleke.ddns.net:3000/OtMC/lecturer");
                 in = new BufferedReader(new InputStreamReader(url.openStream()));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -269,23 +235,17 @@ public class MainActivity extends AppCompatActivity {
             // Remove all white spaces in strJson
             strJson = builder.toString().replaceAll("\\s+", " ");
 
-            // Check if JSON file is empty
-            if (strJson.equals("[]")) {
-                Log.d("AuthFail", strJson);
-            } else {
-                Log.d("AuthSuccess", strJson);
-            }
 
             try {
                 // Does not run on Marshmallow
                 FileUtils.deleteQuietly(new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json"));
                 FileUtils.writeStringToFile(new File(Environment.getExternalStorageDirectory().toString() + "/lecturerQuestions.json"), strJson, false);
-                Log.d("success", strJson + "right here");
+
 
                 // file.close();
             } catch (IOException e) {
                 System.out.println("Cannot create file");
-                Log.d("fail", "fail");
+
                 Log.d("FilePath?", Environment.getExternalStorageDirectory().toString());
                 e.printStackTrace();
             }

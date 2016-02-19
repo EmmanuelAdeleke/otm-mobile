@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.emmanueladeleke.studentform.R;
+import com.example.emmanueladeleke.studentform.UserDialog;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,7 +23,7 @@ public class OpenFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        UserDialog.showMessageToUser(getActivity(), "HEY");
         return inflater.inflate(R.layout.fragment_open, container, false);
     }
 
