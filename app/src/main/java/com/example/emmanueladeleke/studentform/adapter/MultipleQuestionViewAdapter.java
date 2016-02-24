@@ -7,39 +7,34 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.emmanueladeleke.studentform.QuestionRefactor;
 import com.example.emmanueladeleke.studentform.R;
 import com.example.emmanueladeleke.studentform.question.ClosedQuestion;
 
 import java.util.List;
 
-public class QuestionViewAdapter extends RecyclerView.Adapter<QuestionViewAdapter.QuestionViewHolder> {
+public class MultipleQuestionViewAdapter extends RecyclerView.Adapter<MultipleQuestionViewAdapter.MultipleViewHolder> {
 
     List<ClosedQuestion> questionList;
     private ClickListener clickListener;
 
-    public QuestionViewAdapter(List<ClosedQuestion> questionList) {
+    public MultipleQuestionViewAdapter(List<ClosedQuestion> questionList) {
         this.questionList = questionList;
     }
 
 
-    public static class QuestionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class MultipleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private ClickListener clickListener;
         CardView cv;
-        TextView firstName;
-        TextView lastName;
         TextView topic;
-        TextView question;
+        TextView quantity;
 
-        public QuestionViewHolder(View itemView) {
+        public MultipleViewHolder(View itemView) {
             super(itemView);
             itemView.setOnClickListener(this);
             cv = (CardView) itemView.findViewById(R.id.cv);
-            firstName = (TextView) itemView.findViewById(R.id.tvFirstName);
-            lastName = (TextView) itemView.findViewById(R.id.tvLastName);
             topic = (TextView) itemView.findViewById(R.id.tvTopic);
-            question = (TextView) itemView.findViewById(R.id.tvQuestion);
+            quantity = (TextView) itemView.findViewById(R.id.tvQuantity);
         }
 
 
@@ -53,9 +48,9 @@ public class QuestionViewAdapter extends RecyclerView.Adapter<QuestionViewAdapte
 
 
     @Override
-    public QuestionViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview, viewGroup, false);
-        QuestionViewHolder questionViewHolder = new QuestionViewHolder(view);
+    public MultipleViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.mcardview, viewGroup, false);
+        MultipleViewHolder questionViewHolder = new MultipleViewHolder(view);
         return questionViewHolder;
     }
 
@@ -66,11 +61,11 @@ public class QuestionViewAdapter extends RecyclerView.Adapter<QuestionViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(QuestionViewHolder holder, final int position) {
-        holder.firstName.setText(questionList.get(position)._id);
-        holder.lastName.setText(questionList.get(position).topic);
+    public void onBindViewHolder(MultipleViewHolder holder, final int position) {
+
         holder.topic.setText(questionList.get(position).topic);
-        holder.question.setText(questionList.get(position).topic);
+        holder.quantity.setText("- " + questionList.get(position).questionList.size() + " questions to answer");
+//        holder.question.setText(questionList.get(position).topic);
     }
 
     public void setClickListener(ClickListener clickListener) {

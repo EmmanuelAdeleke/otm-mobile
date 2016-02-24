@@ -12,6 +12,12 @@ public class ClosedQuestion {
     public String topic;
     public String lecturerId;
     public List<SingleClosedQuestion> questionList;
+    public int size;
+
+    public int getSize() {
+        size = questionList.size();
+        return size;
+    }
 
     public String toString() {
         return _id + " " + topic + " " + lecturerId + " " + questionList;

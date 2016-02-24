@@ -1,7 +1,6 @@
 package com.example.emmanueladeleke.studentform.tabs;
 
 
-
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,7 +19,7 @@ import com.example.emmanueladeleke.studentform.MainActivity;
 import com.example.emmanueladeleke.studentform.MQuestion;
 import com.example.emmanueladeleke.studentform.R;
 import com.example.emmanueladeleke.studentform.UserDialog;
-import com.example.emmanueladeleke.studentform.adapter.QuestionViewAdapter;
+import com.example.emmanueladeleke.studentform.adapter.MultipleQuestionViewAdapter;
 import com.example.emmanueladeleke.studentform.question.ClosedQuestion;
 import com.google.gson.Gson;
 
@@ -36,7 +35,6 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- *
  */
 public class MultipleFragment extends Fragment {
 
@@ -57,8 +55,6 @@ public class MultipleFragment extends Fragment {
         QuestionTask questionTask = new QuestionTask();
         questionTask.execute();
 
-        parseJson();
-
         fragment = new MultipleRecyclerViewFragment();
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -76,7 +72,7 @@ public class MultipleFragment extends Fragment {
 //        rv.setAdapter(adapter);
 //        rv.setItemAnimator(new DefaultItemAnimator());
 
-
+        parseJson();
         return rootView;
     }
 
@@ -91,20 +87,13 @@ public class MultipleFragment extends Fragment {
         }
         Gson gson = new Gson();
 
-//        Log.e("wwwwww", strJson);
-
         ClosedQuestion[] multiple = gson.fromJson(strJson, ClosedQuestion[].class);
 
-        Log.e("eee", multiple.toString());
-
         for (int i = 0; i < multiple.length; i++) {
-            Log.e("wowow", multiple[i].toString());
+//            Log.e("wowow", multiple[i].toString());
         }
 
         multipleList = Arrays.asList(multiple);
-
-        Log.e("whats up", multipleList.toString());
-
 
 //        for (int i = 0; i < lecturer.length; i++) {
 //            for (int j = 0; j < lecturer[i].questions.size(); j++) {
@@ -144,8 +133,7 @@ public class MultipleFragment extends Fragment {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//http://emmanueladeleke.ddns.net:3000/OtMC/lecturer?query={"studentList":{"_id":"56ae251e27bb4013ea26f48c"}}
-            // Get input from in and store in builder
+
             String inputLine;
             StringBuilder builder = new StringBuilder();
             try {
@@ -183,7 +171,7 @@ public class MultipleFragment extends Fragment {
                 e.printStackTrace();
             }
 
-           return null;
+            return null;
         }
 
 
@@ -194,7 +182,7 @@ public class MultipleFragment extends Fragment {
         }
     }
 
-//    @TargetApi(Build.VERSION_CODES.HONEYCOMB§
+    //    @TargetApi(Build.VERSION_CODES.HONEYCOMB§
     public static class MultipleRecyclerViewFragment extends Fragment {
 
         public RecyclerView rv;
@@ -217,7 +205,7 @@ public class MultipleFragment extends Fragment {
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
             rv.setLayoutManager(linearLayoutManager);
 
-            QuestionViewAdapter adapter = new QuestionViewAdapter(multipleList);
+            MultipleQuestionViewAdapter adapter = new MultipleQuestionViewAdapter(multipleList);
 
             ItemClickSupport.addTo(rv).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
                 @Override

@@ -33,6 +33,7 @@ public class MQuestion extends Fragment implements View.OnClickListener {
     int questionIndex;
     int closedQuestionIndex;
     int closedQuestionLimit;
+    int correctCount = 0;
 
     public MQuestion() {
         // Required empty public constructor
@@ -43,7 +44,7 @@ public class MQuestion extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_oquestion, container, false);
+        View view = inflater.inflate(R.layout.fragment_mquestion, container, false);
 
 
         questionIndex = MultipleFragment.position;
@@ -81,10 +82,18 @@ public class MQuestion extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bSubmitA:
-                Log.e("asd", "asdasdasd");
+                isCorrect(bSubmitA.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+                break;
+            case R.id.bSubmitB:
+                isCorrect(bSubmitB.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+                break;
+            case R.id.bSubmitC:
+                isCorrect(bSubmitC.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+                break;
+            case R.id.bSubmitD:
+                isCorrect(bSubmitD.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
                 break;
         }
-        Log.e("asd", "asdasdasd");
         nextQuestion();
     }
 
@@ -101,8 +110,20 @@ public class MQuestion extends Fragment implements View.OnClickListener {
             getFragmentManager().beginTransaction()
                     .replace(R.id.multipleContainer, new MultipleFragment.MultipleRecyclerViewFragment())
                     .commit();
-
-            UserDialog.showMessageToUser(getActivity(), "Answers sent");
+            UserDialog.showMessageToUser(getContext(), "Your score is... " + correctCount + "/" + MultipleFragment.multipleList.get(questionIndex).questionList.size());
+            correctCount = 0;
         }
+    }
+
+    public void isCorrect(String correctAns, String userAns) {
+
+        if (correctAns.equals(userAns)) {
+            correctCount++;
+            UserDialog.showMessageToUser(getContext(), "Correct!");
+        }
+        else {
+            UserDialog.showMessageToUser(getContext(), "...The correct answer is: " + MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+        }
+
     }
 }

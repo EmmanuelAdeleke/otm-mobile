@@ -1,31 +1,31 @@
-package com.example.emmanueladeleke.studentform;
+package com.example.emmanueladeleke.studentform.question;
 
 /**
  * Created by EmmanuelAdeleke on 16/01/2016.
  */
 public class QuestionRefactor {
 
-    public int lecturerId;
+    public String lecturerId;
     public String firstName;
     public String lastName;
     public String questionId;
     public String topic;
-    public String question;
+    public String questions;
 
 
-    public QuestionRefactor(int lecturerId, String firstName, String lastName,
-                            String questionId, String topic, String question) {
+    public QuestionRefactor(String lecturerId, String firstName, String lastName,
+                            String questionId, String topic, String questions) {
         this.lecturerId = lecturerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.questionId = questionId;
         this.topic = topic;
-        this.question = question;
+        this.questions = questions;
     }
 
     @Override
     public String toString() {
         return lecturerId + " " + firstName + " " + lastName +
-                questionId + " " + topic + " " + question;
+                questionId + " " + topic + " " + questions;
     }
 }

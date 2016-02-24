@@ -8,12 +8,13 @@ import java.util.Arrays;
 public class SingleClosedQuestion {
     public String question;
     public String[] ansOption;
+    public String correctAnswer;
     public int A;
     public int B;
     public int C;
     public int D;
 
     public String toString() {
-        return question.toString() + " " + Arrays.toString(ansOption);
+        return question.toString() + " " + correctAnswer + " " + Arrays.toString(ansOption);
     }
 }
