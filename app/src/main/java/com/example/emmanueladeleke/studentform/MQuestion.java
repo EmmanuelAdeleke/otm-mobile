@@ -4,6 +4,7 @@ package com.example.emmanueladeleke.studentform;
 import android.annotation.TargetApi;
 
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -16,6 +17,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.emmanueladeleke.studentform.tabs.MultipleFragment;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,6 +41,8 @@ public class MQuestion extends Fragment implements View.OnClickListener {
     int closedQuestionIndex;
     int closedQuestionLimit;
     int correctCount = 0;
+    String selected = "";
+    int i = 0;
 
     public MQuestion() {
         // Required empty public constructor
@@ -83,22 +92,28 @@ public class MQuestion extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.bSubmitA:
                 isCorrect(bSubmitA.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+                selected = "A";
                 break;
             case R.id.bSubmitB:
                 isCorrect(bSubmitB.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+                selected = "B";
                 break;
             case R.id.bSubmitC:
                 isCorrect(bSubmitC.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+                selected = "C";
                 break;
             case R.id.bSubmitD:
                 isCorrect(bSubmitD.getText().toString(), MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
+                selected = "D";
                 break;
         }
-        nextQuestion();
+        IncrementValueTask incrementValueTask = new IncrementValueTask();
+        incrementValueTask.execute();
+
     }
 
     public void nextQuestion() {
-        if (closedQuestionIndex < closedQuestionLimit - 1) {
+        if (closedQuestionIndex != closedQuestionLimit - 1) {
             closedQuestionIndex++;
 
             tvOpenQuestion.setText(MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).question);
@@ -111,6 +126,7 @@ public class MQuestion extends Fragment implements View.OnClickListener {
                     .replace(R.id.multipleContainer, new MultipleFragment.MultipleRecyclerViewFragment())
                     .commit();
             UserDialog.showMessageToUser(getContext(), "Your score is... " + correctCount + "/" + MultipleFragment.multipleList.get(questionIndex).questionList.size());
+            Log.e("closedquestionlimit", "INDEX IS: " + closedQuestionIndex + "\t\t" + "LIMIT IS: " + closedQuestionLimit + "");
             correctCount = 0;
         }
     }
@@ -120,10 +136,53 @@ public class MQuestion extends Fragment implements View.OnClickListener {
         if (correctAns.equals(userAns)) {
             correctCount++;
             UserDialog.showMessageToUser(getContext(), "Correct!");
-        }
-        else {
+        } else {
             UserDialog.showMessageToUser(getContext(), "...The correct answer is: " + MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).correctAnswer);
         }
 
+    }
+
+    private class IncrementValueTask extends AsyncTask<Void, Void, Void> {
+
+        String SERVER_ADDRESS = "emmanueladeleke.ddns.net";
+        String DATABASE = "OtMC";
+        String COLLECTION = "closedquestion";
+
+        MongoClient client;
+        MongoDatabase database;
+        MongoCollection<Document> collection;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            client = new MongoClient(SERVER_ADDRESS);
+            database = client.getDatabase(DATABASE);
+            collection = database.getCollection(COLLECTION);
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            Document find = new Document("_id", new ObjectId(MultipleFragment.multipleList.get(questionIndex)._id))
+                    .append("questionList.question", MultipleFragment.multipleList.get(questionIndex).questionList.get(closedQuestionIndex).question);
+
+            Document listItem = new Document("questionList.$." + selected, 1);
+
+            Document updateQuery = new Document("$inc", listItem);
+
+            collection.updateOne(find, updateQuery);
+
+            Log.e("i", i + "");
+            i++;
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            nextQuestion();
+        }
     }
 }
