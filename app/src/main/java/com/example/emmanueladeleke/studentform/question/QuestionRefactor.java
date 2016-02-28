@@ -10,22 +10,22 @@ public class QuestionRefactor {
     public String lastName;
     public String questionId;
     public String topic;
-    public String questions;
+    public String question;
 
 
     public QuestionRefactor(String lecturerId, String firstName, String lastName,
-                            String questionId, String topic, String questions) {
+                            String questionId, String topic, String question) {
         this.lecturerId = lecturerId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.questionId = questionId;
         this.topic = topic;
-        this.questions = questions;
+        this.question = question;
     }
 
     @Override
     public String toString() {
         return lecturerId + " " + firstName + " " + lastName +
-                questionId + " " + topic + " " + questions;
+                questionId + " " + topic + " " + question;
     }
 }

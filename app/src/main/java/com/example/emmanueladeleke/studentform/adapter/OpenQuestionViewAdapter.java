@@ -66,7 +66,7 @@ public class OpenQuestionViewAdapter extends RecyclerView.Adapter<OpenQuestionVi
     public void onBindViewHolder(OpenQuestionViewHolder holder, final int position) {
         holder.fullName.setText("Set by: " + questionList.get(position).firstName + " " + questionList.get(position).lastName);
         holder.topic.setText(questionList.get(position).topic);
-        holder.question.setText(questionList.get(position).questions);
+        holder.question.setText(questionList.get(position).question);
     }
 
     public void setClickListener(ClickListener clickListener) {

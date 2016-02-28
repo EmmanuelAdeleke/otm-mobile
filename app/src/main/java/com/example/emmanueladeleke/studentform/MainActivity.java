@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         tvEmail = (TextView) findViewById(R.id.tvEmail);
         tvName.setText(user.getFirstName() + " " + user.getLastName());
         tvEmail.setText(user.getEmailAddress());
-        Log.e("donedone", user.getId());
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);

@@ -126,7 +126,6 @@ public class MQuestion extends Fragment implements View.OnClickListener {
                     .replace(R.id.multipleContainer, new MultipleFragment.MultipleRecyclerViewFragment())
                     .commit();
             UserDialog.showMessageToUser(getContext(), "Your score is... " + correctCount + "/" + MultipleFragment.multipleList.get(questionIndex).questionList.size());
-            Log.e("closedquestionlimit", "INDEX IS: " + closedQuestionIndex + "\t\t" + "LIMIT IS: " + closedQuestionLimit + "");
             correctCount = 0;
         }
     }

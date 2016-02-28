@@ -32,7 +32,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import layout.OQuestion;
+import com.example.emmanueladeleke.studentform.OQuestion;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +41,7 @@ public class OpenFragment extends Fragment {
 
     public static List<QuestionRefactor> questionList;
     public OpenRecyclerViewFragment fragment;
+    public static int position;
 
     public OpenFragment() {
         // Required empty public constructor
@@ -212,6 +213,7 @@ public class OpenFragment extends Fragment {
                 @Override
                 public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                     OQuestion oQuestion = new OQuestion();
+                    OpenFragment.position = position;
                     replaceFragment();
                 }
             });
